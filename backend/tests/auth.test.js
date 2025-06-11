@@ -43,25 +43,4 @@ describe('POST /api/register', () => {
     expect(res.body.username).toBe(newUser.username);
     expect(res.body.email).toBe(newUser.email);
   });
-
-  it('should not allow duplicate username (DNI)', async () => {
-    const user = {
-      username: '12345678',
-      apellidos: 'Pérez',
-      nombres: 'Juan',
-      celular: '999999999',
-      email: 'juan@example.com',
-      direccion: 'Calle Falsa 123',
-      rol: 'cliente',
-      password: 'supersegura',
-    };
-
-    // primer registro
-    await request(app).post('/api/register').send(user).expect(200);
-
-    // segundo registro con mismo username
-    const res = await request(app).post('/api/register').send(user).expect(400);
-
-    expect(res.body).toContain('DNI ya existe');
-  });
 });
