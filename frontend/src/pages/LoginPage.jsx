@@ -38,7 +38,7 @@ function LoginPage() {
             {err}
           </p>
         ))}
-        <h1 className="text-3xl font-extrabold text-blue-800 mb-6">
+        <h1 data-testid="login-title" className="text-3xl font-extrabold text-blue-800 mb-6">
           Iniciar Sesión
         </h1>
         <form onSubmit={onSubmit} className="space-y-4">
