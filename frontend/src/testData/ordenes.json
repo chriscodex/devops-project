@@ -1,0 +1,26 @@
+{
+  "cliente": {
+    "tipo": "persona",
+    "dni": "74062106",
+    "personaResponsable": "Espinoza Cadillo Christian Gonzalo",
+    "celular": "931140258",
+    "email": "chris@gmail.com"
+  },
+  "equipo": {
+    "marca": "Xiaomi",
+    "categoria": "Teclado",
+    "producto": "Dragon",
+    "serie": "123456789",
+    "accesorios": "caja protectora",
+    "observaciones": "Color negro y luces LED"
+  },
+  "prioridad": "Normal",
+  "area": "Taller",
+  "tipoServicio": "Reparación",
+  "trabajo": "Reparar sensor de DPI",
+  "fecha": "2023-10-29T15:00:00.000Z",
+  "monto": "10",
+  "estado": "pendiente",
+  "user": "652e8a63814b75f6c1a857a4",
+  "createdAt": "2023-10-21T20:22:00.000Z"
+}
