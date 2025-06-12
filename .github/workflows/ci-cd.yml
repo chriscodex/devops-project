@@ -2,9 +2,9 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build:
@@ -18,12 +18,17 @@ jobs:
         with:
           node-version: 18
 
-      - name: Instalar dependencias
-        run: yarn install 
+      - name: Instalar dependencias del backend
+        run: npm install
+        working-directory: ./backend
 
       - name: Ejecutar pruebas backend
         run: yarn test
         working-directory: ./backend
+
+      - name: Instalar dependencias del frontend
+        run: npm install
+        working-directory: ./frontend
 
       - name: Ejecutar pruebas frontend
         run: yarn test
