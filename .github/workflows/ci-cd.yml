@@ -84,7 +84,7 @@ jobs:
           while [ $attempt -le $max_attempts ]; do
             echo "Intento $attempt de $max_attempts"
             if yarn install --prefer-offline; then
-                cho "Instalación exitosa!"
+                echo "Instalación exitosa!"
               break
             else
               wait_time=$((attempt * 10))
