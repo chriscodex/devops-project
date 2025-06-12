@@ -125,7 +125,7 @@ jobs:
         run: docker build -t frontend-image ./frontend
 
       - name: Autenticarse en GHCR
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+        run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Etiquetar imagen backend para GHCR
         run: docker tag backend-image ghcr.io/chriscodex/backend:latest
