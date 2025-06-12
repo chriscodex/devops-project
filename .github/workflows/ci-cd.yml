@@ -18,6 +18,17 @@ jobs:
         with:
           node-version: 18
 
+      - name: Cache Node.js modules
+        uses: actions/cache@v3
+        with:
+          path: ./backend/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/backend/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
       - name: Instalar dependencias del backend
-        run: npm ci
+        run: |
+          for i in {1..5}; do
+            npm ci && break || sleep 15
+          done
         working-directory: ./backend
