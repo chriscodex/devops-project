@@ -123,3 +123,18 @@ jobs:
 
       - name: Construir imagen Docker frontend
         run: docker build -t frontend-image ./frontend
+
+      - name: Autenticarse en GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Etiquetar imagen backend para GHCR
+        run: docker tag backend-image ghcr.io/chriscodex/backend:latest
+
+      - name: Etiquetar imagen frontend para GHCR
+        run: docker tag frontend-image ghcr.io/chriscodex/frontend:latest
+
+      - name: Subir imagen backend a GHCR
+        run: docker push ghcr.io/chriscodex/backend:latest
+
+      - name: Subir imagen frontend a GHCR
+        run: docker push ghcr.io/chriscodex/frontend:latest
