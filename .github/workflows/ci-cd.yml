@@ -17,18 +17,46 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
 
-      - name: Cache Node.js modules
+      - name: Cache de dependencias
         uses: actions/cache@v3
         with:
-          path: ./backend/node_modules
+          path: |
+            ./backend/node_modules
+            ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/backend/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - name: Instalar dependencias del backend
+      - name: Instalar dependencias con reintentos y mirror
         run: |
-          for i in {1..5}; do
-            npm ci && break || sleep 15
+          npm config set registry https://registry.npmmirror.com
+
+          max_attempts=5
+          attempt=1
+          while [ $attempt -le $max_attempts ]; do
+            echo "Intento $attempt de $max_attempts"
+            if npm ci --no-audit --prefer-offline; then
+              echo "Instalación exitosa!"
+              break
+            else
+              wait_time=$((attempt * 10))
+              echo "Falló. Reintentando en $wait_time segundos..."
+              sleep $wait_time
+              ((attempt++))
+            fi
           done
+
+          if [ $attempt -gt $max_attempts ]; then
+            echo "Usando fallback: npm install"
+            npm install --no-audit --prefer-offline
+          fi
         working-directory: ./backend
+
+      - name: Identificar dependencias obsoletas
+        run: |
+          npx npm-deprecation-check || echo "Advertencia: Paquetes obsoletos detectados"
+        working-directory: ./backend
+        continue-on-error: true
