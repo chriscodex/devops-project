@@ -1,0 +1,50 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del código fuente
+        uses: actions/checkout@v3
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Instalar dependencias
+        run: yarn install 
+
+      - name: Ejecutar pruebas backend
+        run: yarn test
+        working-directory: ./backend
+
+      - name: Ejecutar pruebas frontend
+        run: yarn test
+        working-directory: ./frontend
+
+      - name: Linter backend
+        run: yarn lint
+        working-directory: ./backend
+
+      - name: Linter frontend
+        run: yarn lint
+        working-directory: ./frontend
+
+      - name: Compilar frontend
+        run: yarn build
+        env:
+          VITE_BACKEND_URL: http://localhost:3000/api
+        working-directory: ./frontend
+
+      - name: Construir imagen Docker backend
+        run: docker build -t backend-image ./backend
+
+      - name: Construir imagen Docker frontend
+        run: docker build -t frontend-image ./frontend
