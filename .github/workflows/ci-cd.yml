@@ -99,3 +99,15 @@ jobs:
             exit 1
           fi
         working-directory: ./frontend
+
+      - name: Ejecutar pruebas frontend
+        run: yarn test
+        working-directory: ./frontend
+
+      - name: Linter backend
+        run: yarn lint
+        working-directory: ./backend
+
+      - name: Linter frontend
+        run: yarn lint
+        working-directory: ./frontend
