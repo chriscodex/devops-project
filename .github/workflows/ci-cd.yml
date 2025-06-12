@@ -60,3 +60,42 @@ jobs:
           npx npm-deprecation-check || echo "Advertencia: Paquetes obsoletos detectados"
         working-directory: ./backend
         continue-on-error: true
+
+      - name: Ejecutar pruebas backend
+        run: yarn test
+        working-directory: ./backend
+
+      - name: Cache de dependencias frontend
+        uses: actions/cache@v3
+        with:
+          path: |
+            ./frontend/node_modules
+            ~/.cache/yarn
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/frontend/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Instalar dependencias del frontend con reintentos y mirror
+        run: |
+          yarn config set registry https://registry.npmmirror.com
+
+          max_attempts=5
+          attempt=1
+          while [ $attempt -le $max_attempts ]; do
+            echo "Intento $attempt de $max_attempts"
+            if yarn install --prefer-offline; then
+                cho "Instalación exitosa!"
+              break
+            else
+              wait_time=$((attempt * 10))
+              echo "Falló. Reintentando en $wait_time segundos..."
+              sleep $wait_time
+              ((attempt++))
+            fi
+          done
+
+          if [ $attempt -gt $max_attempts ]; then
+            echo "Error: No se pudo instalar con yarn después de varios intentos"
+            exit 1
+          fi
+        working-directory: ./frontend
