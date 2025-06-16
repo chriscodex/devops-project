@@ -26,3 +26,8 @@ variable "app_ami" {
   description = "ID de la AMI a utilizar"
   type        = string
 }
+
+variable "key_name" {
+  description = "Nombre de la clave SSH"
+  type        = string
+}

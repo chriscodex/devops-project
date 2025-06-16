@@ -35,8 +35,9 @@ module "security_group" {
 }
 
 module "ssh_key" {
-  source   = "../modules/ssh_key"
-  key_name = "stnetcomputer-prod-key"
+  source          = "../modules/ssh_key"
+  key_name        = var.key_name
+  key_output_path = "${path.module}/keys"
 }
 
 module "stnetcomputer_server" {
