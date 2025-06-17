@@ -1,0 +1,64 @@
+version: "3.8"
+
+services:
+  nginx:
+    image: nginx:latest
+    container_name: nginx_staging
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d/staging:/etc/nginx/conf.d
+      - certbot-www:/var/www/certbot
+      - certbot-etc:/etc/letsencrypt
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - staging-network
+
+  certbot:
+    image: certbot/certbot
+    container_name: certbot_staging
+    volumes:
+      - certbot-etc:/etc/letsencrypt
+      - certbot-www:/var/www/certbot
+    entrypoint: /bin/sh -c
+    command: > 
+      "trap exit TERM; 
+      while :; do sleep 1 & wait $${!}; done"
+    networks:
+      - staging-network
+
+  frontend:
+    image: ghcr.io/chriscodex/frontend:latest
+    container_name: frontend_staging
+    environment:
+      - VITE_BACKEND_URL=https://api.staging.chriscodex.online/api
+    networks:
+      - staging-network
+
+  backend:
+    image: ghcr.io/chriscodex/backend:latest
+    container_name: backend_staging
+    env_file:
+      - .env.staging
+    networks:
+      - staging-network
+
+  mongodb:
+    image: mongo:6.0
+    container_name: mongodb_staging
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - staging-network
+
+volumes:
+  mongo_data:
+  certbot-etc:
+  certbot-www:
+
+networks:
+  staging-network:
+    driver: bridge
