@@ -115,7 +115,7 @@ jobs:
       - name: Compilar frontend
         run: yarn build
         env:
-          VITE_BACKEND_URL: http://localhost:3000/api
+          VITE_BACKEND_URL: ${{ secrets.BACKEND_URL }}
         working-directory: ./frontend
 
       - name: Construir imagen Docker backend
