@@ -48,4 +48,5 @@ module "stnetcomputer_server" {
   tags              = { Name = "stnetcomputer-staging-server" }
   security_group_id = module.security_group.security_group_id
   key_name          = module.ssh_key.key_name
+  user_data         = file("${path.module}/scripts/install.sh")
 }

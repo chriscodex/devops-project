@@ -27,3 +27,9 @@ variable "key_name" {
   description = "SSH key name for the instance"
   type        = string
 }
+
+variable "user_data" {
+  description = "Script de inicialización que se ejecuta al lanzar la instancia"
+  type        = string
+  default     = ""
+}
