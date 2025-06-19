@@ -1,0 +1,110 @@
+name: CI/CD Pipeline Staging
+
+on:
+  push:
+    branches: [staging]
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout del código fuente
+        uses: actions/checkout@v3
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Cache de dependencias backend
+        uses: actions/cache@v3
+        with:
+          path: |
+            ./backend/node_modules
+            ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/backend/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Instalar dependencias backend
+        run: |
+          npm config set registry https://registry.npmmirror.com
+          npm ci --no-audit --prefer-offline || npm install --no-audit --prefer-offline
+        working-directory: ./backend
+
+      - name: Pruebas backend
+        run: yarn test
+        working-directory: ./backend
+
+      - name: Linter backend
+        run: yarn lint
+        working-directory: ./backend
+
+      - name: Cache de dependencias frontend
+        uses: actions/cache@v3
+        with:
+          path: |
+            ./frontend/node_modules
+            ~/.cache/yarn
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/frontend/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Instalar dependencias frontend
+        run: |
+          yarn config set registry https://registry.npmmirror.com
+          yarn install --prefer-offline
+        working-directory: ./frontend
+
+      - name: Pruebas frontend
+        run: yarn test
+        working-directory: ./frontend
+
+      - name: Linter frontend
+        run: yarn lint
+        working-directory: ./frontend
+
+      - name: Compilar frontend
+        run: yarn build
+        env:
+          VITE_BACKEND_URL: ${{ secrets.STAGING_BACKEND_URL }}
+        working-directory: ./frontend
+
+      - name: Construir imagen Docker backend
+        run: docker build -t backend-image ./backend
+        env:
+          DATABASE_URL: ${{ secrets.STAGING_DATABASE_URL }}
+          PORT: ${{ secrets.STAGING_PORT }}
+          CLIENT_URL: ${{ secrets.STAGING_CLIENT_URL }}
+          TOKEN_API_RUC_DNI: ${{ secrets.STAGING_TOKEN_API_RUC_DNI }}
+
+      - name: Construir imagen Docker frontend
+        run: docker build -t frontend-image ./frontend
+        env:
+          VITE_BACKEND_URL: ${{ secrets.STAGING_BACKEND_URL }}
+
+      - name: Autenticarse en GHCR
+        run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Etiquetar imagen backend para GHCR
+        run: |
+          docker tag backend-image ghcr.io/chriscodex/backend:staging-${{ github.sha }}
+          docker tag backend-image ghcr.io/chriscodex/backend:staging-latest
+
+      - name: Etiquetar imagen frontend para GHCR
+        run: |
+          docker tag frontend-image ghcr.io/chriscodex/frontend:staging-${{ github.sha }}
+          docker tag frontend-image ghcr.io/chriscodex/frontend:staging-latest
+
+      - name: Subir imagen backend a GHCR
+        run: |
+          docker push ghcr.io/chriscodex/backend:staging-${{ github.sha }}
+          docker push ghcr.io/chriscodex/backend:staging-latest
+
+      - name: Subir imagen frontend a GHCR
+        run: |
+          docker push ghcr.io/chriscodex/frontend:staging-${{ github.sha }}
+          docker push ghcr.io/chriscodex/frontend:staging-latest
