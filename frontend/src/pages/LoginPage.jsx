@@ -28,7 +28,7 @@ function LoginPage() {
       <nav className="bg-white py-4 absolute top-0 w-full">
         <div className="container mx-auto flex items-center justify-center">
           <h1 className="text-3xl font-extrabold text-blue-800">
-            Soporte Técnico NetComputer
+            Soporte Técnico NetComputer - UNIR
           </h1>
         </div>
       </nav>

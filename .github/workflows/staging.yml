@@ -68,12 +68,6 @@ jobs:
         run: yarn lint
         working-directory: ./frontend
 
-      - name: Verificar variable VITE_BACKEND_URL
-        run: echo "VITE_BACKEND_URL=${VITE_BACKEND_URL}" | sed 's/./& /g'
-        env:
-          VITE_BACKEND_URL: ${{ secrets.STAGING_BACKEND_URL }}
-        working-directory: ./frontend
-
       - name: Compilar frontend
         run: yarn build
         env:

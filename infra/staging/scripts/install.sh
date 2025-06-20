@@ -20,3 +20,5 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin 
 # Docker compose
 mkdir -p /home/ubuntu/app
 chown ubuntu:ubuntu /home/ubuntu/app
+
+docker network create nginx-network
