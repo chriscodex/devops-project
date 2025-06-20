@@ -7,6 +7,7 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    environment: staging
 
     steps:
       - name: Checkout del código fuente
@@ -82,9 +83,7 @@ jobs:
           TOKEN_API_RUC_DNI: ${{ secrets.STAGING_TOKEN_API_RUC_DNI }}
 
       - name: Construir imagen Docker frontend
-        run: docker build -t frontend-image ./frontend
-        env:
-          VITE_BACKEND_URL: ${{ secrets.STAGING_BACKEND_URL }}
+        run: docker build -f ./frontend/Dockerfile.staging -t frontend-image ./frontend
 
       - name: Autenticarse en GHCR
         run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
