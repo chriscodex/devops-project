@@ -31,7 +31,7 @@ data "aws_subnet" "default" {
 module "security_group" {
   source = "../modules/security_group"
   vpc_id = data.aws_vpc.default.id
-  name   = "stnetcomputer-prod-sg"
+  name   = "stnetcomputer-production-sg"
 }
 
 module "ssh_key" {
@@ -45,7 +45,8 @@ module "stnetcomputer_server" {
   ami_id            = var.app_ami
   instance_type     = var.instance_type
   subnet_id         = data.aws_subnet.default.id
-  tags              = { Name = "stnetcomputer-prod-server" }
+  tags              = { Name = "stnetcomputer-production-server" }
   security_group_id = module.security_group.security_group_id
   key_name          = module.ssh_key.key_name
+  user_data         = file("${path.module}/scripts/install.sh")
 }
