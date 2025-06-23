@@ -1,0 +1,32 @@
+name: Deploy Production
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Acceder a la instancia EC2 y desplegar
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.PROD_HOST }}
+          username: ${{ secrets.PROD_USER }}
+          key: ${{ secrets.PROD_SSH_KEY }}
+          port: 22
+          script: |
+            echo "Conectado a EC2"
+            cd /home/ubuntu
+
+            echo "Deteniendo servicios antiguos"
+            docker compose -f docker-compose.production.yml down
+
+            echo "Descargando últimas imágenes"
+            docker compose -f docker-compose.production.yml pull
+
+            echo "Iniciando servicios en segundo plano"
+            docker compose -f docker-compose.production.yml up -d
+
+            echo "Despliegue completado"
