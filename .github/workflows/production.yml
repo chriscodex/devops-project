@@ -1,4 +1,4 @@
-name: CI/CD Pipeline Production
+name: CI Pipeline Production
 
 on:
   push:
