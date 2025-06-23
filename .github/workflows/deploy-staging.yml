@@ -17,16 +17,16 @@ jobs:
           key: ${{ secrets.STAGING_SSH_KEY }}
           port: 22
           script: |
-            echo "🚀 Conectado a EC2"
+            echo "Conectado a EC2"
             cd /home/ubuntu
 
-            echo "🧹 Deteniendo servicios antiguos"
+            echo "Deteniendo servicios antiguos"
             docker compose -f docker-compose.staging.yml down
 
-            echo "🔄 Descargando últimas imágenes"
+            echo "Descargando últimas imágenes"
             docker compose -f docker-compose.staging.yml pull
 
-            echo "🔥 Iniciando servicios en segundo plano"
+            echo "Iniciando servicios en segundo plano"
             docker compose -f docker-compose.staging.yml up -d
 
-            echo "✅ Despliegue completado"
+            echo "Despliegue completado"
