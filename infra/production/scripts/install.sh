@@ -23,6 +23,9 @@ sudo apt-get update
 # Instalar Docker y sus componentes SIN pedir confirmación
 sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
+# Agregar usuario a grupo Docker
+sudo usermod -aG docker ubuntu
+
 # Crear carpeta para app
 sudo mkdir -p /home/ubuntu/app
 sudo chown ubuntu:ubuntu /home/ubuntu/app

@@ -8,6 +8,12 @@ variable "instance_type" {
   type        = string
 }
 
+variable "volume_size" {
+  description = "Tamaño del disco raíz en GB"
+  type        = number
+  default     = 8
+}
+
 variable "subnet_id" {
   description = "Subnet ID to launch the instance in"
   type        = string
