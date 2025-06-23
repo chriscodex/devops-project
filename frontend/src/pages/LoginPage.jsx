@@ -21,7 +21,7 @@ function LoginPage() {
 
   useEffect(() => {
     if (isAuthenticated) navigate('/ordenes');
-  }, [isAuthenticated, navigate]);
+  },
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-500 via-blue-600 to-blue-700">
